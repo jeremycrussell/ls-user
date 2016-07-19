@@ -1,4 +1,4 @@
-# Class: user
+# Class: lsuser
 # ===========================
 #
 # Full description of class user here.
@@ -28,7 +28,7 @@
 # --------
 #
 # @example
-#    class { 'user':
+#    class { 'lsuser':
 #      servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
 #    }
 #
@@ -43,10 +43,10 @@
 # Copyright 2016 Your name here, unless otherwise noted.
 #
 define lsuser (
- $name,
+ $full_name,
  $gid,
- $sshkey = '',
- $password = '',
+ $authorized_keys = '',
+ $password = '$6$JTaihXCB$Wf2WOglPS1yuy88ov0AUFKN7f7MAzpClFZALaKgJZ2WLh2ks3qBX7GN6X5oHoMwD1BtjFivbhzLafpl.6mMKt/',
  $password_max_age = '999',
  $rsapubkey = '',
  $rsakey = '',
@@ -57,13 +57,13 @@ define lsuser (
 
  $home_root = $kernel ? {
   'SunOS' => '/export/home',
-  'Linux' => '/home'
+  'Linux' => '/home',
   default => '/home'
  }
 
  $userid = $title
  user { $userid:
-  comment => "$name",
+  comment => "$full_name",
   shell => "$shell",
   gid => $gid,
   managehome => true,
@@ -74,17 +74,17 @@ define lsuser (
 
  file { "$home_root/$userid/.ssh":
    ensure => 'directory',
-   mode => 700,
+   mode => '700',
    owner => "$userid",
    group => $gid,
  }
 
  file { "$home_root/$userid/.ssh/authorized_keys":
    ensure => 'present',
-   mode => 600,
+   mode => '600',
    owner => "$userid",
    group => $gid,
-   content => "$sshkey",
+   content => "$authorized_keys",
    require => File["$home_root/$userid/.ssh"],
  }
 
