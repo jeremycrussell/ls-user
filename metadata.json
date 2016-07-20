@@ -1,12 +1,12 @@
 {
-  "name": "ls-user",
+  "name": "lsuser",
   "version": "0.0.1",
   "author": "jeremycrussell@gmail.com",
   "summary": "Custom LS users",
   "license": "Apache-2.0",
-  "source": "https://github.com/jeremycrussell/ls-user.git",
-  "project_page": "https://github.com/jeremycrussell/ls-user",
-  "issues_url": "https://github.com/jeremycrussell/ls-user/issues",
+  "source": "https://github.com/jeremycrussell/lsuser.git",
+  "project_page": "https://github.com/jeremycrussell/lsuser",
+  "issues_url": "https://github.com/jeremycrussell/lsuser/issues",
   "dependencies": [
     {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
   ],
