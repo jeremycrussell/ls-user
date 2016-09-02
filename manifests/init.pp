@@ -55,7 +55,7 @@ define lsuser (
  $shell = '/bin/bash',
 ) {
 
- ${home_root} = ${kernel} ? {
+ $home_root = $kernel ? {
   'SunOS' => '/export/home',
   'Linux' => '/home',
   default => '/home'
