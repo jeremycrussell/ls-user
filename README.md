@@ -21,11 +21,11 @@ lsuser affects users on any system.
 
 ## Usage
 
-  `lsuser { 'user':
+  ```lsuser { 'user':
      full_name => 'User Name"
      gid => groupid,
      authorized_keys => 'ssh-rsa <key content>',
-   }`
+   }```
 
 ## Reference
 
