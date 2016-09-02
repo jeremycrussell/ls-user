@@ -1,5 +1,5 @@
 {
-  "name": "lsuser",
+  "name": "puppet-lsuser",
   "version": "0.0.1",
   "author": "jeremycrussell@gmail.com",
   "summary": "Custom LS users",
