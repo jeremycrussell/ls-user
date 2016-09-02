@@ -11,7 +11,7 @@
 1. [Development - Guide for contributing to the module](#development)
 
 ## Description
-lsuser providers a new resource type of lsuer, it builds upon the resource type os user to provide some LegalShield specific attributes.
+lsuser providers a new resource type of `lsuser`, it builds upon the resource type os user to provide some LegalShield specific attributes.
 
 ## Setup
 
@@ -25,7 +25,7 @@ lsuser affects users on any system.
      full_name => 'User Name"
      gid => groupid,
      authorized_keys => 'ssh-rsa <key content>',
-   }'
+   }`
 
 ## Reference
 
