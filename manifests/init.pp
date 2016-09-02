@@ -55,37 +55,52 @@ define lsuser (
  $shell = '/bin/bash',
 ) {
 
- $home_root = $kernel ? {
+ ${home_root} = ${kernel} ? {
   'SunOS' => '/export/home',
   'Linux' => '/home',
   default => '/home'
  }
 
- $userid = $title
- user { $userid:
-  comment => "$full_name",
-  shell => "$shell",
-  gid => $gid,
+ ${userid} = ${title}
+ user { ${userid}:
+  comment => "${full_name}",
+  shell => "${shell}",
+  gid => ${gid},
   managehome => true,
-  home => "$home_root/$userid",
-  password => "$password",
-  password_max_age => "$password_max_age"
+  home => "${home_root}/${userid}",
+  password => "${password}",
+  password_max_age => "${password_max_age}"
  }
 
- file { "$home_root/$userid/.ssh":
+ file { "${home_root}/${userid}/.ssh":
    ensure => 'directory',
    mode => '700',
-   owner => "$userid",
-   group => $gid,
+   owner => "${userid}",
+   group => ${gid},
  }
 
- file { "$home_root/$userid/.ssh/authorized_keys":
-   ensure => 'present',
-   mode => '600',
-   owner => "$userid",
-   group => $gid,
-   content => "$authorized_keys",
-   require => File["$home_root/$userid/.ssh"],
+ if ( ${authorized_keys} =~ /^http/) {
+   exec{'get_keys':
+     command => "/usr/bin/wget -q ${authorized_keys} -O ${home_root}/${userid}/.ssh/authorized_keys",
+     creates => "/${home_root}/${userid}/.ssh/authorized_keys",
+   }
+
+   file { "${home_root}/${userid}/.ssh/authorized_keys":
+     ensure => 'present',
+     mode => '600',
+     owner => "${userid}",
+     group => ${gid},
+     require => [ Exec['get_keys'], File["${home_root}/${userid}/.ssh"] ],
+   }
+ } else {
+   file { "${home_root}/${userid}/.ssh/authorized_keys":
+     ensure => 'present',
+     mode => '600',
+     owner => "${userid}",
+     group => ${gid},
+     content => "${authorized_keys}",
+     require => File["${home_root}/${userid}/.ssh"],
+   }
  }
 
 }
