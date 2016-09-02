@@ -1,0 +1,59 @@
+#!/bin/bash
+
+PUPPET_DIR=$1
+
+usage() {
+  if [[ -z ${PUPPET_DIR} ]]; then
+    echo "usage: $0 <path to puppet config files>"
+    exit 1
+  fi
+
+  if [ ! -d ${PUPPET_DIR} ]; then
+    echo "No such directory!"
+    exit 1
+  fi
+}
+
+
+pparser() {
+  echo "Puppet DSL syntax check"
+  for file in $(find ${PUPPET_DIR} -type f -name "*.pp"); do 
+    puppet parser validate $file || exit 1;
+  done
+}
+
+erb() {
+  echo "Erb syntax check"
+  for file in $(find ${PUPPET_DIR} -type f -name *.erb); do 
+    echo "checking $file"
+    echo "erb -x -T '-' $file | ruby -c || exit 1;"
+    erb -x -T '-' $file | ruby -c || exit 1;
+  done
+}
+
+usage
+
+pparser
+if [ $? -eq 0 ]; then
+  echo "Parser Successful"
+else
+  exit $?
+fi
+
+#erb
+if [ $? -eq 0 ]; then
+  echo "Erb Successful"
+else
+  exit $?
+fi
+
+echo "Puppet-lint check"
+puppet-lint ${PUPPET_DIR}
+if [ $? -eq 0 ]; then
+  echo "Puppet-lint Successful"
+else
+  exit $?
+fi
+
+echo "All Tests Passed"
+exit 0
