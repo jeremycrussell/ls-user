@@ -61,7 +61,7 @@ define lsuser (
   default => '/home'
  }
 
- $userid = ${title}
+ $userid = $title
 
  user { "${userid}":
   comment => "${full_name}",
@@ -80,7 +80,7 @@ define lsuser (
    group => "${gid}",
  }
 
- if ( ${authorized_keys} =~ /^http/) {
+ if ( $authorized_keys =~ /^http/) {
    exec { 'get_keys':
      command => "/usr/bin/wget -q ${authorized_keys} -O ${home_root}/${userid}/.ssh/authorized_keys",
      creates => "/${home_root}/${userid}/.ssh/authorized_keys",
