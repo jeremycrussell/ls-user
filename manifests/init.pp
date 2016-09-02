@@ -61,11 +61,12 @@ define lsuser (
   default => '/home'
  }
 
- ${userid} = ${title}
- user { ${userid}:
+ $userid = ${title}
+
+ user { "${userid}":
   comment => "${full_name}",
   shell => "${shell}",
-  gid => ${gid},
+  gid => "${gid}",
   managehome => true,
   home => "${home_root}/${userid}",
   password => "${password}",
@@ -76,11 +77,11 @@ define lsuser (
    ensure => 'directory',
    mode => '700',
    owner => "${userid}",
-   group => ${gid},
+   group => "${gid}",
  }
 
  if ( ${authorized_keys} =~ /^http/) {
-   exec{'get_keys':
+   exec { 'get_keys':
      command => "/usr/bin/wget -q ${authorized_keys} -O ${home_root}/${userid}/.ssh/authorized_keys",
      creates => "/${home_root}/${userid}/.ssh/authorized_keys",
    }
@@ -89,7 +90,7 @@ define lsuser (
      ensure => 'present',
      mode => '600',
      owner => "${userid}",
-     group => ${gid},
+     group => "${gid}",
      require => [ Exec['get_keys'], File["${home_root}/${userid}/.ssh"] ],
    }
  } else {
@@ -97,7 +98,7 @@ define lsuser (
      ensure => 'present',
      mode => '600',
      owner => "${userid}",
-     group => ${gid},
+     group => "${gid}",
      content => "${authorized_keys}",
      require => File["${home_root}/${userid}/.ssh"],
    }
