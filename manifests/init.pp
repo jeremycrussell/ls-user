@@ -81,7 +81,7 @@ define lsuser (
  }
 
  if ( $authorized_keys =~ /^http/) {
-   exec { 'get_keys':
+   exec { "get_keys_${userid}":
      command => "/usr/bin/wget -q ${authorized_keys} -O ${home_root}/${userid}/.ssh/authorized_keys",
      creates => "/${home_root}/${userid}/.ssh/authorized_keys",
    }
@@ -91,7 +91,7 @@ define lsuser (
      mode => '600',
      owner => "${userid}",
      group => "${gid}",
-     require => [ Exec['get_keys'], File["${home_root}/${userid}/.ssh"] ],
+     require => [ Exec["get_keys_${userid}"], File["${home_root}/${userid}/.ssh"] ],
    }
  } else {
    file { "${home_root}/${userid}/.ssh/authorized_keys":
