@@ -75,7 +75,7 @@ define lsuser (
   password_max_age => "${password_max_age}"
  }
 
- if ( $ensure != 'removed' ) {
+ if ( $ensure == 'present' ) {
    file { "${home_root}/${userid}/.ssh":
      ensure => 'directory',
      mode => '700',
