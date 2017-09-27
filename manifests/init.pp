@@ -43,6 +43,7 @@
 # Copyright 2016 Your name here, unless otherwise noted.
 #
 define lsuser (
+ $ensure = 'present',
  $full_name,
  $gid,
  $authorized_keys = '',
@@ -64,43 +65,46 @@ define lsuser (
  $userid = $title
 
  user { "${userid}":
-  comment => "${full_name}",
-  shell => "${shell}",
-  gid => "${gid}",
-  managehome => true,
-  home => "${home_root}/${userid}",
-  password => "${password}",
+  ensure           => "${ensure}",
+  comment          => "${full_name}",
+  shell            => "${shell}",
+  gid              => "${gid}",
+  managehome       => true,
+  home             => "${home_root}/${userid}",
+  password         => "${password}",
   password_max_age => "${password_max_age}"
  }
 
- file { "${home_root}/${userid}/.ssh":
-   ensure => 'directory',
-   mode => '700',
-   owner => "${userid}",
-   group => "${gid}",
- }
-
- if ( $authorized_keys =~ /^http/) {
-   exec { "get_keys_${userid}":
-     command => "/usr/bin/wget -q ${authorized_keys} -O ${home_root}/${userid}/.ssh/authorized_keys",
-     creates => "/${home_root}/${userid}/.ssh/authorized_keys",
-   }
-
-   file { "${home_root}/${userid}/.ssh/authorized_keys":
-     ensure => 'present',
-     mode => '600',
+ if ( $ensure != 'removed' ) {
+   file { "${home_root}/${userid}/.ssh":
+     ensure => 'directory',
+     mode => '700',
      owner => "${userid}",
      group => "${gid}",
-     require => [ Exec["get_keys_${userid}"], File["${home_root}/${userid}/.ssh"] ],
    }
- } else {
-   file { "${home_root}/${userid}/.ssh/authorized_keys":
-     ensure => 'present',
-     mode => '600',
-     owner => "${userid}",
-     group => "${gid}",
-     content => "${authorized_keys}",
-     require => File["${home_root}/${userid}/.ssh"],
+
+   if ( $authorized_keys =~ /^http/) {
+     exec { "get_keys_${userid}":
+       command => "/usr/bin/wget -q ${authorized_keys} -O ${home_root}/${userid}/.ssh/authorized_keys",
+       creates => "/${home_root}/${userid}/.ssh/authorized_keys",
+     }
+
+     file { "${home_root}/${userid}/.ssh/authorized_keys":
+       ensure => 'present',
+       mode => '600',
+       owner => "${userid}",
+       group => "${gid}",
+       require => [ Exec["get_keys_${userid}"], File["${home_root}/${userid}/.ssh"] ],
+     }
+   } else {
+     file { "${home_root}/${userid}/.ssh/authorized_keys":
+       ensure => 'present',
+       mode => '600',
+       owner => "${userid}",
+       group => "${gid}",
+       content => "${authorized_keys}",
+       require => File["${home_root}/${userid}/.ssh"],
+     }
    }
  }
 
