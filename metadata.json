@@ -1,6 +1,6 @@
 {
   "name": "puppet-lsuser",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "jeremycrussell@gmail.com",
   "summary": "Custom LS users",
   "license": "Apache-2.0",
