@@ -84,13 +84,14 @@ define lsuser (
    }
 
    if ( $authorized_keys =~ /^http/) {
+      $keys = generate("/bin/bash","-c","/usr/bin/wget -q ${authorized_keys} -O -")
 
      file { "${home_root}/${userid}/.ssh/authorized_keys":
        ensure => 'present',
        mode => '600',
        owner => "${userid}",
        group => "${gid}",
-       source  => $authorized_keys,
+       content => $keys,
        require => [ File["${home_root}/${userid}/.ssh"] ],
      }
    } else {
